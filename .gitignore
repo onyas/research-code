@@ -13,6 +13,7 @@ dummy-file-copy
 .settings/
 .classpath
 .project
+/*/.project
 
 # bundles related
 bundler/bundles/
