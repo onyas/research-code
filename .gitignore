@@ -1,0 +1,26 @@
+# Common
+target/
+.tmp
+*.iml
+*.log
+*.class
+*.zip
+dummy-file-copy
+
+# IDE related
+.idea/
+.vscode/
+.settings/
+.classpath
+.project
+
+# bundles related
+bundler/bundles/
+
+
+# MacOS related files
+.DS_Store
+.DS_Store?
+
+
+
