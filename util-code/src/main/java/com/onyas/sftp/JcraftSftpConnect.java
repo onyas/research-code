@@ -8,6 +8,7 @@ public class JcraftSftpConnect {
     public static String PASSWORD = "pass";
     public static String HOST = "localhost";
     public static int PORT = 2022;
+    public static String targetDir = "upload";
 
     public static void main(String[] args) throws JSchException, SftpException {
         JSch jsch = new JSch();
@@ -23,8 +24,11 @@ public class JcraftSftpConnect {
 
         channelSftp.connect(15000);
         channelSftp.cd(channelSftp.getHome());
-        SftpATTRS attrs  = channelSftp.lstat("upload");
+        SftpATTRS attrs = channelSftp.lstat(targetDir);
         System.out.println(attrs);
+        channelSftp.cd(targetDir);
+
+        channelSftp.put("/var/log/dropbox/dropbox.log","/upload/dropbox1");
 
         channelSftp.disconnect();
         session.disconnect();
