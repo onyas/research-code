@@ -23,7 +23,7 @@ public class User implements Serializable,BaseEntity {
     }
 
     @Column(name = "ownerId", unique = true)
-    private long ownerId;
+    private int ownerId;
 
     @Column(name = "refreshToken", length = 1000)
     private String refreshToken;
@@ -34,11 +34,11 @@ public class User implements Serializable,BaseEntity {
     @Column(name = "userName")
     private String userName;
 
-    public long getOwnerId() {
+    public int getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(long ownerId) {
+    public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
     }
 
@@ -64,5 +64,16 @@ public class User implements Serializable,BaseEntity {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", ownerId=" + ownerId +
+                ", refreshToken='" + refreshToken + '\'' +
+                ", accessToken='" + accessToken + '\'' +
+                ", userName='" + userName + '\'' +
+                '}';
     }
 }

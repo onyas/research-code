@@ -10,19 +10,20 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Random;
 
-@ContextConfiguration(locations={"classpath*:applicationContext.xml"})
-@RunWith( SpringJUnit4ClassRunner.class )
+
+@ContextConfiguration(locations = {"classpath*:applicationContext.xml"})
+@RunWith(SpringJUnit4ClassRunner.class)
 public class UserServiceTest {
 
     @Autowired
     private UserRepository userRepository;
 
     @Test
-    public void testAdd(){
+    public void testAdd() {
         User user = new User();
-        user.setId(new Random().nextLong());
         user.setAccessToken("test");
-        user.setOwnerId(1);
+        int ownId = new Random().nextInt(100000);
+        user.setOwnerId(ownId);
         userRepository.save(user);
     }
 
