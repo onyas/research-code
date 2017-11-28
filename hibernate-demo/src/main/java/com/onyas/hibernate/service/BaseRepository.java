@@ -2,7 +2,6 @@ package com.onyas.hibernate.service;
 
 import com.onyas.hibernate.dao.BaseEntity;
 import com.onyas.hibernate.util.ReflectionUtil;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -79,7 +78,8 @@ public abstract class BaseRepository<T extends BaseEntity>{
     }
 
     @SuppressWarnings("unchecked")
-    public T findById(final Long id) {
+    public T findById(final T object,Long id) {
+        checkTableShard(object);
         return (T) getSession().get(clazz, id);
     }
 
