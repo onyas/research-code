@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 @WebAppConfiguration()
 public class UserServiceTest {
 
-    static ExecutorService tabelThreadPool = Executors.newFixedThreadPool(3);
+    static ExecutorService tableThreadPool = Executors.newFixedThreadPool(3);
 
     @Autowired
     private UserRepository userRepository;
@@ -96,7 +96,7 @@ public class UserServiceTest {
         CountDownLatch start = new CountDownLatch(1);
         CountDownLatch end = new CountDownLatch(threadNum);
         for (int i = 0; i < threadNum; i++) {
-            tabelThreadPool.submit(new TableShardInsertThread(start, end));
+            tableThreadPool.submit(new TableShardInsertThread(start, end));
         }
 
         System.out.println("start...");
