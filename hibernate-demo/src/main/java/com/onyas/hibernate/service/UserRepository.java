@@ -1,6 +1,7 @@
 package com.onyas.hibernate.service;
 
 import com.onyas.hibernate.dao.User;
+import com.onyas.hibernate.interceptor.TableShardInspector;
 import org.hibernate.Session;
 import org.hibernate.SessionBuilder;
 import org.hibernate.SessionFactory;
@@ -9,21 +10,25 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserRepository extends BaseRepository<User> {
+    protected ThreadLocal<TableShardInspector> tableShardInspectorThreadLocal = new ThreadLocal<>();
 
     @Autowired
     private SessionFactory sessionFactory;
 
     @Override
     protected Session getSession() {
-//        return sessionFactory.getCurrentSession();
-        if (tableShardInterceptorThreadLocal.get() == null) {
+        if (tableShardInspectorThreadLocal.get() == null) {
             return sessionFactory.getCurrentSession();
         } else {
-            SessionBuilder builder = this.sessionFactory.withOptions().interceptor(tableShardInterceptorThreadLocal.get());
-            Session session = builder.openSession();
-            return session;
+            SessionBuilder builder = this.sessionFactory.withOptions().statementInspector(tableShardInspectorThreadLocal.get());
+            return builder.openSession();
         }
     }
 
-
+    @Override
+    protected void checkTableShard(User user) {
+        System.out.println("User info :" + user);
+        int modId = user.getOwnerId() % 3;
+        tableShardInspectorThreadLocal.set(new TableShardInspector("test_user", "test_user_" + modId));
+    }
 }
