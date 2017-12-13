@@ -88,4 +88,11 @@ public abstract class BaseRepository<T extends BaseEntity>{
         return getSession().createCriteria(clazz).list();
     }
 
+    public List<T> findByOwnerId(final T object,long ownerId) {
+        checkTableShard(object);
+        return (List<T>) getSession().createQuery("from User where ownerid = ?0 ")
+                .setParameter(0, ownerId)
+                .list();
+    }
+
 }

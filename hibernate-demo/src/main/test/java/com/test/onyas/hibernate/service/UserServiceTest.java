@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -74,6 +75,14 @@ public class UserServiceTest {
         user.setOwnerId(44960);
         user = userRepository.findById(user, 3L);
         System.out.printf("User :" + user);
+    }
+
+    @Test
+    public void testFindByOwnerId() {
+        User user = new User();
+        user.setOwnerId(234140);
+        List<User> userList = userRepository.findByOwnerId(user,234140);
+        System.out.printf("User :" + userList.size());
     }
 
 
