@@ -34,6 +34,9 @@ public class User implements Serializable,BaseEntity {
     @Column(name = "userName")
     private String userName;
 
+    @Column(name = "threadName")
+    private String threadName;
+
     public int getOwnerId() {
         return ownerId;
     }
@@ -64,6 +67,14 @@ public class User implements Serializable,BaseEntity {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getThreadName() {
+        return threadName;
+    }
+
+    public void setThreadName(String threadName) {
+        this.threadName = threadName;
     }
 
     @Override

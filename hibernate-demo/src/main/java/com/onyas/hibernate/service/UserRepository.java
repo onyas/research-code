@@ -1,34 +1,19 @@
 package com.onyas.hibernate.service;
 
 import com.onyas.hibernate.dao.User;
-import com.onyas.hibernate.interceptor.TableShardInspector;
-import org.hibernate.Session;
-import org.hibernate.SessionBuilder;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import javax.transaction.Transactional;
 
 @Repository
 public class UserRepository extends BaseRepository<User> {
-    protected ThreadLocal<TableShardInspector> tableShardInspectorThreadLocal = new ThreadLocal<>();
 
-    @Autowired
-    private SessionFactory sessionFactory;
-
-    @Override
-    protected Session getSession() {
-        if (tableShardInspectorThreadLocal.get() == null) {
-            return sessionFactory.getCurrentSession();
-        } else {
-            SessionBuilder builder = this.sessionFactory.withOptions().statementInspector(tableShardInspectorThreadLocal.get());
-            return builder.openSession();
-        }
-    }
-
-    @Override
-    protected void checkTableShard(User user) {
-        System.out.println("User info :" + user);
-        int modId = user.getOwnerId() % 3;
-        tableShardInspectorThreadLocal.set(new TableShardInspector("test_user", "test_user_" + modId));
+    @Transactional
+    public int updateToCurrentThread(User user) {
+        return getSession()
+                .createQuery("update User set threadName = ?0 where id = ?1 and threadName is null")
+                .setParameter(0, user.getThreadName())
+                .setParameter(1, user.getId())
+                .executeUpdate();
     }
 }

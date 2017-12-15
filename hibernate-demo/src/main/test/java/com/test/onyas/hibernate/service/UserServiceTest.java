@@ -1,7 +1,7 @@
 package com.test.onyas.hibernate.service;
 
 import com.onyas.hibernate.dao.User;
-import com.onyas.hibernate.service.UserRepository;
+import com.onyas.hibernate.service.UserShardRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class UserServiceTest {
     static ExecutorService tableThreadPool = Executors.newFixedThreadPool(3);
 
     @Autowired
-    private UserRepository userRepository;
+    private UserShardRepository userShardRepository;
 
     @Test
     public void testAdd() {
@@ -36,7 +36,7 @@ public class UserServiceTest {
         user.setAccessToken("test");
         user.setRefreshToken("test_refresh");
         user.setUserName("this is name");
-        userRepository.save(user);
+        userShardRepository.save(user);
     }
 
 
@@ -47,7 +47,7 @@ public class UserServiceTest {
         user.setAccessToken("test");
         user.setOwnerId(47597);
         user.setRefreshToken("update");
-        userRepository.update(user);
+        userShardRepository.update(user);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class UserServiceTest {
         user.setAccessToken("test");
         user.setOwnerId(47597);
         user.setRefreshToken("update");
-        userRepository.saveOrUpdate(user);
+        userShardRepository.saveOrUpdate(user);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class UserServiceTest {
         User user = new User();
         user.setId(1L);
         user.setOwnerId(47597);
-        userRepository.delete(user);
+        userShardRepository.delete(user);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class UserServiceTest {
         User user = new User();
         user.setId(3L);
         user.setOwnerId(44960);
-        user = userRepository.findById(user, 3L);
+        user = userShardRepository.findById(user, 3L);
         System.out.printf("User :" + user);
     }
 
@@ -81,7 +81,7 @@ public class UserServiceTest {
     public void testFindByOwnerId() {
         User user = new User();
         user.setOwnerId(234140);
-        List<User> userList = userRepository.findByOwnerId(user,234140);
+        List<User> userList = userShardRepository.findByOwnerId(user,234140);
         System.out.printf("User :" + userList.size());
     }
 
@@ -95,7 +95,7 @@ public class UserServiceTest {
             u.setRefreshToken("rt" + i);
             u.setUserName("name" + i);
             u.setAccessToken("ac" + i);
-            userRepository.saveOrUpdate(u);
+            userShardRepository.saveOrUpdate(u);
         }
     }
 
@@ -134,7 +134,7 @@ public class UserServiceTest {
                     u.setRefreshToken("rt" + i);
                     u.setUserName("name" + i);
                     u.setAccessToken("ac" + i);
-                    userRepository.saveOrUpdate(u);
+                    userShardRepository.saveOrUpdate(u);
                 }
                 end.countDown();
             } catch (Exception e) {

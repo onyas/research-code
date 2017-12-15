@@ -2,15 +2,19 @@ package com.onyas.hibernate.service;
 
 import com.onyas.hibernate.dao.BaseEntity;
 import com.onyas.hibernate.util.ReflectionUtil;
+import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
-public abstract class BaseRepository<T extends BaseEntity>{
-
+public abstract class BaseRepository<T extends BaseEntity> {
     protected Class<T> clazz;
+
+    @Autowired
+    private SessionFactory sessionFactory;
 
     public BaseRepository() {
         this.clazz = ReflectionUtil.getClassGenericType(getClass());
@@ -21,78 +25,48 @@ public abstract class BaseRepository<T extends BaseEntity>{
     }
 
     protected Session getSession() {
-        return null;
+        return sessionFactory.getCurrentSession();
     }
 
     @Transactional
-    public T save(T object) {
-        checkTableShard(object);
-
-        Session session = getSession();
-        Transaction tx = session.beginTransaction();
-        session.persist(object);
-        session.flush();
-        tx.commit();
-        session.close();
+    public T save(final T object) {
+        getSession().setFlushMode(FlushMode.AUTO);
+        getSession().persist(object);
+        getSession().flush();
         return object;
     }
 
-    protected abstract void checkTableShard(T object);
-
     @Transactional
     public T update(final T object) {
-        checkTableShard(object);
-        Session session = getSession();
-        Transaction tx = session.beginTransaction();
-        session.update(object);
-        session.flush();
-        tx.commit();
-        session.close();
+        getSession().setFlushMode(FlushMode.AUTO);
+        getSession().update(object);
+        getSession().flush();
         return object;
     }
 
     @Transactional
     public T saveOrUpdate(final T object) {
-        checkTableShard(object);
-
-        Session session = getSession();
-        Transaction tx = session.beginTransaction();
-        session.saveOrUpdate(object);
-        session.flush();
-        tx.commit();
-        session.close();
+        getSession().setFlushMode(FlushMode.AUTO);
+        getSession().saveOrUpdate(object);
+        getSession().flush();
         return object;
     }
 
     @Transactional
     public void delete(final T object) {
-        checkTableShard(object);
-
-        Session session = getSession();
-        Transaction tx = session.beginTransaction();
-        session.delete(object);
-        session.flush();
-
-        tx.commit();
-        session.close();
+        getSession().setFlushMode(FlushMode.AUTO);
+        getSession().delete(object);
+        getSession().flush();
     }
 
     @SuppressWarnings("unchecked")
-    public T findById(final T object,Long id) {
-        checkTableShard(object);
+    public T findById(final Long id) {
         return (T) getSession().get(clazz, id);
     }
 
-    @SuppressWarnings("unchecked")
+    @Transactional
     public List<T> findAll() {
         return getSession().createCriteria(clazz).list();
-    }
-
-    public List<T> findByOwnerId(final T object,long ownerId) {
-        checkTableShard(object);
-        return (List<T>) getSession().createQuery("from User where ownerid = ?0 ")
-                .setParameter(0, ownerId)
-                .list();
     }
 
 }
