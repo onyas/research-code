@@ -1,147 +1,111 @@
 package com.test.onyas.hibernate.service;
 
 import com.onyas.hibernate.dao.User;
-import com.onyas.hibernate.service.UserShardRepository;
+import com.onyas.hibernate.service.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 @ContextConfiguration(locations = {"classpath*:applicationContext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-@Transactional
-@WebAppConfiguration()
 public class UserServiceTest {
-
-    static ExecutorService tableThreadPool = Executors.newFixedThreadPool(3);
+    static ExecutorService threadPool = Executors.newFixedThreadPool(5);
 
     @Autowired
-    private UserShardRepository userShardRepository;
+    private UserRepository userRepository;
 
     @Test
     public void testAdd() {
-        User user = new User();
-        int ownId = new Random().nextInt(100000);
-        user.setOwnerId(ownId);
-        user.setAccessToken("test");
-        user.setRefreshToken("test_refresh");
-        user.setUserName("this is name");
-        userShardRepository.save(user);
+        for (int i = 0; i < 1000; i++) {
+            User user = new User();
+            user.setAccessToken("accessTokenByAdd");
+            user.setUserName("user" + i);
+            user.setRefreshToken("s");
+            user.setOwnerId(i);
+            userRepository.save(user);
+        }
     }
 
 
     @Test
     public void testUpdate() {
         User user = new User();
-        user.setId(1L);
-        user.setAccessToken("test");
-        user.setOwnerId(47597);
-        user.setRefreshToken("update");
-        userShardRepository.update(user);
+        user.setId(10015L);
+        user.setUserName("update10015");
+        user.setOwnerId(10015);
+        userRepository.update(user);
     }
 
     @Test
     public void testSaveOrUpdate() {
         User user = new User();
-        user.setId(1L);
-        user.setAccessToken("test");
-        user.setOwnerId(47597);
-        user.setRefreshToken("update");
-        userShardRepository.saveOrUpdate(user);
+        user.setId(10016L);
+        user.setUserName("update10015");
+        user.setOwnerId(10016);
+        userRepository.saveOrUpdate(user);
     }
 
     @Test
-    public void testDelete() {
+    public void testUpdateToCurrentThread() {
         User user = new User();
-        user.setId(1L);
-        user.setOwnerId(47597);
-        userShardRepository.delete(user);
+        user.setId(152L);
+        user.setThreadName("test");
+        int result = userRepository.updateToCurrentThread(user);
+        System.out.println("result = " + result);
     }
 
     @Test
-    public void testFindById() {
-        User user = new User();
-        user.setId(3L);
-        user.setOwnerId(44960);
-        user = userShardRepository.findById(user, 3L);
-        System.out.printf("User :" + user);
-    }
-
-    @Test
-    public void testFindByOwnerId() {
-        User user = new User();
-        user.setOwnerId(234140);
-        List<User> userList = userShardRepository.findByOwnerId(user,234140);
-        System.out.printf("User :" + userList.size());
-    }
-
-
-    @Test
-    public void testBatchInsert() {
-        int start = new Random().nextInt(500000);
-        for (int i = start; i < start + 100; i++) {
-            User u = new User();
-            u.setOwnerId(i);
-            u.setRefreshToken("rt" + i);
-            u.setUserName("name" + i);
-            u.setAccessToken("ac" + i);
-            userShardRepository.saveOrUpdate(u);
-        }
-    }
-
-    @Test
-    public void testMultiThreadSave() throws InterruptedException {
-        int threadNum = 5;
+    public void testLock() throws Exception {
+        int endNum = 5;
         CountDownLatch start = new CountDownLatch(1);
-        CountDownLatch end = new CountDownLatch(threadNum);
-        for (int i = 0; i < threadNum; i++) {
-            tableThreadPool.submit(new TableShardInsertThread(start, end));
+        CountDownLatch end = new CountDownLatch(endNum);
+
+        for (int i = 0; i < endNum; i++) {
+            threadPool.submit(new TableLockThread(start, end, userRepository));
         }
 
-        System.out.println("start...");
         start.countDown();
         end.await();
         System.out.println("end...");
     }
 
-    class TableShardInsertThread extends Thread {
-        private CountDownLatch begin;
-        private CountDownLatch end;
 
-        public TableShardInsertThread(CountDownLatch start, CountDownLatch end) {
-            this.begin = start;
+    static class TableLockThread implements Runnable {
+        private CountDownLatch start;
+        private CountDownLatch end;
+        private UserRepository userRepository;
+
+        public TableLockThread(CountDownLatch start, CountDownLatch end, UserRepository userRepository) {
+            this.start = start;
             this.end = end;
+            this.userRepository = userRepository;
         }
 
         @Override
         public void run() {
             try {
-                begin.await();
-                int start = new Random().nextInt(500000);
-                for (int i = start; i < start + 100; i++) {
-                    User u = new User();
-                    u.setOwnerId(i);
-                    u.setRefreshToken("rt" + i);
-                    u.setUserName("name" + i);
-                    u.setAccessToken("ac" + i);
-                    userShardRepository.saveOrUpdate(u);
+                start.await();
+                List<User> userList = userRepository.findAll();
+                if (CollectionUtils.isEmpty(userList)) {
+                    return;
+                }
+
+                for (User user : userList) {
+                    user.setThreadName(Thread.currentThread().getName());
+                    int result = userRepository.updateToCurrentThread(user);
                 }
                 end.countDown();
             } catch (Exception e) {
-                System.err.printf("e" + e);
+                e.printStackTrace();
             }
         }
     }
-
-
 }

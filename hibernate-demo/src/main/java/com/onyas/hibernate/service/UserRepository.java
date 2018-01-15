@@ -4,6 +4,7 @@ import com.onyas.hibernate.dao.User;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public class UserRepository extends BaseRepository<User> {
@@ -16,4 +17,7 @@ public class UserRepository extends BaseRepository<User> {
                 .setParameter(1, user.getId())
                 .executeUpdate();
     }
+
+
+
 }
