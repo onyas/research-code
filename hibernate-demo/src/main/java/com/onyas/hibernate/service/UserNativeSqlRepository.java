@@ -2,8 +2,11 @@ package com.onyas.hibernate.service;
 
 import com.onyas.hibernate.dao.User;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import javax.transaction.Transactional;
+import java.sql.PreparedStatement;
+import java.util.List;
 
 @Repository
 public class UserNativeSqlRepository extends BaseRepository<User> {
@@ -28,5 +31,24 @@ public class UserNativeSqlRepository extends BaseRepository<User> {
         return getSession().createNativeQuery(sql, User.class)
                 .setParameter("ownerId", ownerId)
                 .uniqueResult();
+    }
+
+    @Transactional
+    public void bulkSave(List<User> userList) {
+        if (CollectionUtils.isEmpty(userList)) {
+            return;
+        }
+        getSession().doWork(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    "insert into test_user_0 (accessToken, ownerId, refreshToken, threadName, userName) values (?, ?, ?, ?, ?)");
+            for (User user : userList) {
+                ps.setString(1, user.getAccessToken());
+                ps.setLong(2, user.getOwnerId());
+                ps.setString(3, user.getRefreshToken());
+                ps.setString(4, user.getThreadName());
+                ps.setString(5, user.getUserName());
+                ps.executeUpdate();
+            }
+        });
     }
 }
