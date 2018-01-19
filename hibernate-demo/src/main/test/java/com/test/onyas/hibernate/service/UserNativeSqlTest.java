@@ -47,6 +47,9 @@ public class UserNativeSqlTest {
             user.setOwnerId(new Random().nextInt());
             userList.add(user);
         }
-        userNativeSqlRepository.bulkSave(userList);
+        List<User> result = userNativeSqlRepository.bulkSave(userList);
+        for (User user : result) {
+            System.out.println(user);
+        }
     }
 }
