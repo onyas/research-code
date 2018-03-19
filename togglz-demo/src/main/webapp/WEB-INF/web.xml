@@ -1,0 +1,62 @@
+<!DOCTYPE web-app PUBLIC
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+    <display-name>Archetype Created Web Application</display-name>
+
+    <!-- Spring -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+
+    <!-- Spring MVC -->
+    <servlet>
+        <servlet-name>springmvc</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!-- 这个节点配不配都可以，因为这是默认值 -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/springmvc-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>springmvc</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+
+
+    <!-- togglz filter-->
+    <filter>
+        <filter-name>TogglzFilter</filter-name>
+        <filter-class>org.togglz.servlet.TogglzFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>TogglzFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- togglz console servlet-->
+    <servlet>
+        <servlet-name>TogglzConsoleServlet</servlet-name>
+        <servlet-class>org.togglz.console.TogglzConsoleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TogglzConsoleServlet</servlet-name>
+        <url-pattern>/togglz/*</url-pattern>
+    </servlet-mapping>
+
+    <context-param>
+        <param-name>org.togglz.core.manager.TogglzConfig</param-name>
+        <param-value>com.onyas.web.togglz.MyTogglzConfiguration</param-value>
+    </context-param>
+</web-app>

@@ -10,6 +10,7 @@
     <modules>
         <module>util-code</module>
         <module>hibernate-demo</module>
+        <module>togglz-demo</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -36,7 +37,23 @@
     <dependencyManagement>
         <dependencies>
 
+            <dependency>
+                <groupId>com.onyas</groupId>
+                <artifactId>togglz-demo</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
 
+            <dependency>
+                <groupId>com.onyas</groupId>
+                <artifactId>hibernate-demo</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.onyas</groupId>
+                <artifactId>util-code</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
             <!-- Spring -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -164,7 +181,42 @@
                 <version>3.4</version>
             </dependency>
 
+            <!-- Togglz core module (mandatory) -->
+            <dependency>
+                <groupId>org.togglz</groupId>
+                <artifactId>togglz-core</artifactId>
+                <version>2.5.0.Final</version>
+            </dependency>
+
+            <!-- Togglz for Servlet environments (mandatory) -->
+            <dependency>
+                <groupId>org.togglz</groupId>
+                <artifactId>togglz-servlet</artifactId>
+                <version>2.5.0.Final</version>
+            </dependency>
+
+            <!-- Togglz Admin Console -->
+            <dependency>
+                <groupId>org.togglz</groupId>
+                <artifactId>togglz-console</artifactId>
+                <version>2.5.0.Final</version>
+            </dependency>
+
+            <!-- CDI integration (optional) -->
+            <dependency>
+                <groupId>org.togglz</groupId>
+                <artifactId>togglz-cdi</artifactId>
+                <version>2.5.0.Final</version>
+            </dependency>
+
+            <!-- Spring integration (optional) -->
+            <dependency>
+                <groupId>org.togglz</groupId>
+                <artifactId>togglz-spring-web</artifactId>
+                <version>2.5.0.Final</version>
+            </dependency>
         </dependencies>
+
     </dependencyManagement>
 
     <build>
