@@ -35,7 +35,12 @@ public enum MyFeatures implements Feature {
     User_by_role,
 
     @Label("Archiver 5.2")
+    @Archiver
     Archiver_5_2,
+
+    @Label("Archiver 5.1")
+    @Archiver
+    Archiver_5_1,
     ;
 
     public boolean isActive() {

@@ -29,4 +29,9 @@ public class TryCatchTest {
         System.out.println((int) (2157766004L % 3));
     }
 
+    @Test
+    public void test(){
+        System.out.println('a'^'a');
+        System.out.println('a'^'b');
+    }
 }
