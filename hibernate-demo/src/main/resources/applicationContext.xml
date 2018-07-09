@@ -20,6 +20,7 @@
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="current_session_context_class">thread</prop>
+                <!--<prop key="hibernate.id.new_generator_mappings">true</prop>-->
             </props>
         </property>
     </bean>
