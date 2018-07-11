@@ -19,5 +19,12 @@ public class UserRepository extends BaseRepository<User> {
     }
 
 
-
+    @Transactional
+    public int batchUpdateToCurrentThread(List<Long> userIds, String name) {
+        return getSession()
+                .createNativeQuery("update test_user set threadName = ? where id in ( :ids ) and threadName is null")
+                .setParameter(1, name)
+                .setParameterList("ids", userIds)
+                .executeUpdate();
+    }
 }
