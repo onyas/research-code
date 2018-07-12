@@ -31,6 +31,9 @@ public class UserServiceTest {
             user.setUserName("user" + i);
             user.setRefreshToken("s");
             user.setOwnerId(i);
+            if(i%2==0){
+                user.setThreadName("locked");
+            }
             userRepository.save(user);
         }
     }
@@ -158,7 +161,7 @@ public class UserServiceTest {
                         System.out.println(Thread.currentThread().getName() + "====" + result);
                         userIds.clear();
                     }
-                    i++;
+                    i+=2;
                 }
                 end.countDown();
             } catch (Exception e) {
